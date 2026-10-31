@@ -27,13 +27,5 @@ services:
       database:
         condition: service_healthy
 
-  ui:
-    build:
-      context: ./ui
-    ports:
-      - "4200:4200"
-    volumes:
-      - ./:/angular-app
-
 volumes:
   postgres_data:
