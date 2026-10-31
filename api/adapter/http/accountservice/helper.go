@@ -17,7 +17,7 @@ func GetIDFromRequest(r *http.Request) (string, error) {
 func GetAccountIDFromToken(r *http.Request) (string, error) {
 	claims, ok := r.Context().Value(middleware.UserClaimsKey).(*middleware.Claims)
 	if !ok {
-		return "", fmt.Errorf("erro ao obter claims do token")
+		return "", fmt.Errorf("error getting token claims")
 	}
 
 	return claims.AccountID, nil

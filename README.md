@@ -1,110 +1,111 @@
 # WhereDidMyMoneyGO
 
-## Uma API RESTful simples em Go para rastreamento de despesas pessoais.
+## A simple RESTful API in Go for tracking personal expenses.
 
-### Recursos
+### Features
 
-    👤 Registro e gerenciamento de usuários
+    👤 User registration and management
 
-    🔐 Login baseado em JWT e rotas protegidas
+    🔐 JWT-based login and protected routes
 
-    💸 Registro de movimentações e saldo mensal dinâmico com base nas movimentações
+    💸 Movement (transaction) tracking and a dynamic monthly balance based on those movements
 
-    📊 Planejado: Exportação de movimentos com saldo pra pranilha de Excel
+    📊 Planned: Export movements with balance to an Excel spreadsheet
 
-## 📦 Pré-requisitos
+## 📦 Prerequisites
 
 - Docker
 - Docker Compose
 - Git
 
-## Configuração e Instalação
+## Setup and Installation
 
-Clone o repositório
+Clone the repository
 
 ```bash
 git clone https://github.com/pedro-scarelli/wheredidmymoneygo.git
 ```
 
-Navegue até a raiz do projeto
+Navigate to the project root
 
 ```bash
 cd wheredidmymoneygo
 ```
 
-## Executando o Servidor
+## Running the Server
 
 ```bash
 docker compose up -d
 ```
 
-Endpoints da API
+API Endpoints
 
-URL base: http://localhost:3000
+Base URL: http://localhost:3000
 
-## Registrar conta
+## Register account
 
 POST /account HTTP/1.1
 Content-Type: application/json
 
 ```json
 {
-    "firstName": "{PRIMEIRO_NOME}",
-    "lastName": "{ULTIMO_NOME}",
+    "firstName": "{FIRST_NAME}",
+    "lastName": "{LAST_NAME}",
     "cpf": "{CPF}",
     "email": "{EMAIL}",
-    "password": "{SENHA}"
+    "password": "{PASSWORD}"
 }
 ```
-## Buscar conta por ID
+## Get account by ID
 
 GET /account/{ID} HTTP/1.1
-Authorization: Bearer {TOKEN_DO_USUARIO}
+Authorization: Bearer {USER_TOKEN}
 
-## Atualizar conta
+## Update account
 
 PATCH /account HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer {TOKEN_DO_USUARIO}
+Authorization: Bearer {USER_TOKEN}
 
 ```json
 {
     "id": "{ID}",
-    "firstName": "{PRIMEIRO_NOME}",
-    "lastName": "{ULTIMO_NOME}",
-    "password": "{SENHA}"
+    "firstName": "{FIRST_NAME}",
+    "lastName": "{LAST_NAME}",
+    "password": "{PASSWORD}"
 }
 ```
-## Deletar conta por ID
+## Delete account by ID
 
 DELETE /account/{ID} HTTP/1.1
-Authorization: Bearer {TOKEN_DO_USUARIO}
+Authorization: Bearer {USER_TOKEN}
 
-## Autenticação
+## Authentication
 
-Método Rota Auth Descrição
+Method Route Auth Description
 POST /login HTTP/1.1
 Content-Type: application/json
 
 ```json
 {
     "email": "{EMAIL}",
-    "password": "{SENHA}"
+    "password": "{PASSWORD}"
 }
 ```
-Retorna token de autenticação
+Returns an authentication token
 
-## Movimentação
+## Movement
 
 POST /account/movement'
-Authorization: Bearer {TOKEN_DO_USUARIO}
+Authorization: Bearer {USER_TOKEN}
 
 ```json
 {
-    "value": {VALOR_COM_2_CASAS_APOS_A_VIRGULA},
-    "type": "{CREDITO_OU_DEBITO}"
-    "recurrence": {NUMERO_DE_RECORRENCIA - 1 A 12},
-    "dueDate": "{DATA_NO_FORMATO 2025-05-27T00:00:00Z}",
-    "description": "{DESCRICAO}"
+    "value": {VALUE_WITH_2_DECIMAL_PLACES},
+    "type": "{CREDITO_OR_DEBITO}"
+    "recurrence": {RECURRENCE_COUNT - 1 TO 12},
+    "dueDate": "{DATE_IN_FORMAT 2025-05-27T00:00:00Z}",
+    "description": "{DESCRIPTION}"
 }
 ```
+`type` accepts `CREDITO` (credit) or `DEBITO` (debit).

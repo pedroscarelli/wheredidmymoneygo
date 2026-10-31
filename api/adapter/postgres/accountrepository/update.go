@@ -27,7 +27,7 @@ func (repository repository) Update(updateAccountRequestDto *dto.UpdateAccountRe
 	)
 
 	if err != nil {
-		return fmt.Errorf("erro ao atualizar conta no banco: %w", err)
+		return fmt.Errorf("error updating account in the database: %w", err)
 	}
 
 	return nil

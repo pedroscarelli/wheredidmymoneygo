@@ -15,7 +15,7 @@ func HashPassword(password string) (string, error) {
 
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), cost)
 	if err != nil {
-		return "", fmt.Errorf("falha ao gerar hash da senha: %w", err)
+		return "", fmt.Errorf("failed to hash password: %w", err)
 	}
 
 	return string(bytes), nil

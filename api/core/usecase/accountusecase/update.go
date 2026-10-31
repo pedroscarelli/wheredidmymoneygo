@@ -18,7 +18,7 @@ func (usecase usecase) Update(updateAccountRequestDto *dto.UpdateAccountRequestD
 
 	account, err := usecase.repository.GetAccountByID(updateAccountRequestDto.ID)
 	if err != nil {
-		return fmt.Errorf("conta não encontrada")
+		return fmt.Errorf("account not found")
 	}
 
 	if updateAccountRequestDto.FirstName != nil {

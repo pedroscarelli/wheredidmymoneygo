@@ -22,14 +22,14 @@ func (d *MovementRequestDTO) Validate() error {
 	switch d.Type {
 	case enum.DEBITO, enum.CREDITO:
 	default:
-		return fmt.Errorf("tipo inválido: %s. Valores permitidos: %s ou %s",
+		return fmt.Errorf("invalid type: %s. Allowed values: %s or %s",
 			d.Type,
 			enum.DEBITO,
 			enum.CREDITO)
 	}
 
 	if d.Recurrence < 1 || d.Recurrence > 12 {
-		return errors.New("ocorrência deve ser entre 1 e 12")
+		return errors.New("recurrence must be between 1 and 12")
 	}
 
 	return nil

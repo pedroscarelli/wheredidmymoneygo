@@ -47,7 +47,7 @@ func (repository repository) Movement(movementRequestDto *dto.MovementRequestDTO
 	)
 
 	if err != nil {
-		return fmt.Errorf("erro ao inserir movimentos: %w", err)
+		return fmt.Errorf("error inserting movements: %w", err)
 	}
 
 	return nil
