@@ -1,27 +1,30 @@
 package authenticationservice
 
 import (
-	"encoding/json"
+	"errors"
 	"net/http"
 
-	dto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/authentication/request"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/http/response"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
+	dto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/authentication/request"
 )
 
-func (service service) Login(response http.ResponseWriter, request *http.Request) {
-	loginRequestDto, err := dto.FromJSONCreateLoginRequestDTO(request.Body)
-	response.Header().Add("Content-Type", "application/json")
+func (service service) Login(w http.ResponseWriter, r *http.Request) {
+	loginRequestDto, err := dto.FromJSONCreateLoginRequestDTO(r.Body)
 	if err != nil {
-		response.WriteHeader(500)
-		json.NewEncoder(response).Encode(map[string]string{"error": err.Error()})
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	loginResponseDto, err := service.usecase.Login(loginRequestDto)
-
 	if err != nil {
-		response.WriteHeader(401)
-		json.NewEncoder(response).Encode(map[string]string{"message": err.Error()})
+		if errors.Is(err, domain.ErrInvalidCredentials) {
+			response.Error(w, http.StatusUnauthorized, err.Error())
+			return
+		}
+		response.InternalError(w, err)
 		return
 	}
-	json.NewEncoder(response).Encode(loginResponseDto)
+
+	response.JSON(w, http.StatusOK, loginResponseDto)
 }

@@ -1,41 +1,29 @@
 package accountservice
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
-	domain "github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/http/response"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
 )
 
-func (service service) GetByID(response http.ResponseWriter, request *http.Request) {
-	accountID, err := GetIDFromRequest(request)
-	response.Header().Add("Content-Type", "application/json")
-	if err != nil {
-		response.WriteHeader(500)
-		json.NewEncoder(response).Encode(map[string]string{"error": err.Error()})
+func (service service) GetByID(w http.ResponseWriter, r *http.Request) {
+	accountID, status := authorizedAccountID(r)
+	if status != http.StatusOK {
+		response.Error(w, status, http.StatusText(status))
 		return
 	}
 
-	account, err := service.GetAccountByID(accountID)
+	account, err := service.usecase.GetByID(accountID)
 	if err != nil {
 		if errors.Is(err, domain.ErrAccountNotFound) {
-			response.WriteHeader(http.StatusNotFound)
-			json.NewEncoder(response).Encode(map[string]string{"error": "account not found"})
-
+			response.Error(w, http.StatusNotFound, err.Error())
 			return
 		}
-		response.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(response).Encode(map[string]string{"error": err.Error()})
-
+		response.InternalError(w, err)
 		return
 	}
 
-	json.NewEncoder(response).Encode(account)
-}
-
-func (service *service) GetAccountByID(id string) (*domain.PublicAccount, error) {
-	account, err := service.usecase.GetByID(id)
-
-	return account, err
+	response.JSON(w, http.StatusOK, account)
 }

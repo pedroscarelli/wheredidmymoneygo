@@ -1,31 +1,28 @@
 package accountservice
 
 import (
-	"encoding/json"
+	"errors"
 	"net/http"
+
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/http/response"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
 )
 
-func (service service) Delete(response http.ResponseWriter, request *http.Request) {
-	accountID, err := GetIDFromRequest(request)
-	response.Header().Add("Content-Type", "application/json")
-	if err != nil {
-		response.WriteHeader(500)
-		json.NewEncoder(response).Encode(map[string]string{"error": err.Error()})
-		
+func (service service) Delete(w http.ResponseWriter, r *http.Request) {
+	accountID, status := authorizedAccountID(r)
+	if status != http.StatusOK {
+		response.Error(w, status, http.StatusText(status))
 		return
 	}
 
-	err = service.usecase.Delete(accountID)
-	if err != nil {
-		response.WriteHeader(500)
-		json.NewEncoder(response).Encode(map[string]string{"error": err.Error()})
-		
+	if err := service.usecase.Delete(accountID); err != nil {
+		if errors.Is(err, domain.ErrAccountNotFound) {
+			response.Error(w, http.StatusNotFound, err.Error())
+			return
+		}
+		response.InternalError(w, err)
 		return
 	}
 
-	json.NewEncoder(response).Encode(map[string]any{
-		"message": "user deleted successfully",
-		"userID":  accountID,
-	},
-	)
+	response.JSON(w, http.StatusOK, map[string]string{"message": "account deleted successfully"})
 }

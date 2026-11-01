@@ -1,43 +1,30 @@
 package accountservice
 
 import (
-	"encoding/json"
 	"net/http"
 
-	dto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/account/request"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/http/response"
+	dto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/account/request"
 )
 
-func (service service) Movement(response http.ResponseWriter, request *http.Request) {
-	movementRequestDTO, err := dto.FromJSONCreateMovementRequestDTO(request.Body)
-	response.Header().Add("Content-Type", "application/json")
-
+func (service service) Movement(w http.ResponseWriter, r *http.Request) {
+	accountID, err := GetAccountIDFromToken(r)
 	if err != nil {
-		response.WriteHeader(400)
-		json.NewEncoder(response).Encode(map[string]string{"error": err.Error()})
-		
+		response.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
 
-	AccountID, err := GetAccountIDFromToken(request)
+	movementRequestDTO, err := dto.FromJSONCreateMovementRequestDTO(r.Body)
 	if err != nil {
-		response.WriteHeader(401)
-		json.NewEncoder(response).Encode(map[string]string{"message": err.Error()})
-		
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	movementRequestDTO.AccountID = AccountID
-	err = service.usecase.Movement(movementRequestDTO)
-	if err != nil {
-		response.WriteHeader(500)
-		json.NewEncoder(response).Encode(map[string]string{"error": err.Error()})
-		
+	movementRequestDTO.AccountID = accountID
+	if err := service.usecase.Movement(movementRequestDTO); err != nil {
+		response.InternalError(w, err)
 		return
 	}
 
-	response.WriteHeader(200)
-	json.NewEncoder(response).Encode(map[string]any{
-		"message": "Movement registered successfully",
-	},
-	)
+	response.JSON(w, http.StatusCreated, map[string]string{"message": "movement registered successfully"})
 }

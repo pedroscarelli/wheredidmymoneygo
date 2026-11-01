@@ -1,6 +1,6 @@
 package authenticationservice
 
-import "github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
+import "github.com/pedroscarelli/wheredidmymoneygo/core/domain"
 
 type service struct {
 	usecase domain.AuthenticationUseCase

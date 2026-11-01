@@ -1,29 +1,30 @@
 package accountservice
 
 import (
-	"encoding/json"
+	"errors"
 	"net/http"
 
-	dto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/account/request"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/http/response"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
+	dto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/account/request"
 )
 
-func (service service) Create(response http.ResponseWriter, request *http.Request) {
-	accountRequest, err := dto.FromJSONCreateAccountRequestDTO(request.Body)
-	response.Header().Add("Content-Type", "application/json")
+func (service service) Create(w http.ResponseWriter, r *http.Request) {
+	accountRequest, err := dto.FromJSONCreateAccountRequestDTO(r.Body)
 	if err != nil {
-		response.WriteHeader(500)
-		json.NewEncoder(response).Encode(map[string]string{"error": err.Error()})
-
+		response.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	account, err := service.usecase.Create(accountRequest)
-
 	if err != nil {
-		response.WriteHeader(500)
-		json.NewEncoder(response).Encode(map[string]string{"error": err.Error()})
-		
+		if errors.Is(err, domain.ErrDuplicateAccount) {
+			response.Error(w, http.StatusConflict, err.Error())
+			return
+		}
+		response.InternalError(w, err)
 		return
 	}
-	json.NewEncoder(response).Encode(account)
+
+	response.JSON(w, http.StatusCreated, account)
 }
