@@ -1,11 +1,11 @@
 package di
 
 import (
-	"github.com/pedro-scarelli/wheredidmymoneygo/adapter/http/accountservice"
-	"github.com/pedro-scarelli/wheredidmymoneygo/adapter/postgres"
-	"github.com/pedro-scarelli/wheredidmymoneygo/adapter/postgres/accountrepository"
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/usecase/accountusecase"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/http/accountservice"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/postgres"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/postgres/accountrepository"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/usecase/accountusecase"
 )
 
 func ConfigAccountDI(conn postgres.PoolInterface) (domain.AccountService, domain.AccountUseCase) {

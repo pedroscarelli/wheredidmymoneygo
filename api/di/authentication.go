@@ -1,11 +1,11 @@
 package di
 
 import (
-	"github.com/pedro-scarelli/wheredidmymoneygo/adapter/http/authenticationservice"
-	"github.com/pedro-scarelli/wheredidmymoneygo/adapter/postgres"
-	"github.com/pedro-scarelli/wheredidmymoneygo/adapter/postgres/accountrepository"
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/usecase/authenticationusecase"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/http/authenticationservice"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/postgres"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/postgres/accountrepository"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/usecase/authenticationusecase"
 )
 
 func ConfigAuthenticationDI(conn postgres.PoolInterface) domain.AuthenticationService {

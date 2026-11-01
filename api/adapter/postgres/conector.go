@@ -2,8 +2,8 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -44,15 +44,18 @@ func GetConnection(context context.Context) *pgxpool.Pool {
 	return conn
 }
 
-func RunMigrations() {
+func RunMigrations() error {
 	m, err := migrate.New("file://database/migrations", "pgx"+dbURLFromEnv())
 	if err != nil {
-		log.Fatal(err)
+		return err
+	}
+	defer m.Close()
+
+	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		return err
 	}
 
-	if err := m.Up(); err != nil {
-		log.Println(err)
-	}
+	return nil
 }
 
 func dbURLFromEnv() string {
