@@ -1,41 +1,32 @@
 package accountusecase
 
 import (
-	"fmt"
-
-	dto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/account/request"
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/security"
+	dto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/account/request"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/security"
 )
 
-func (usecase usecase) Update(updateAccountRequestDto *dto.UpdateAccountRequestDTO) error {
-	if updateAccountRequestDto.Password != nil {
-		hashedPassword, err := security.HashPassword(*updateAccountRequestDto.Password)
-		if err != nil {
-			return err
-		}
-		updateAccountRequestDto.Password = &hashedPassword
-	}
-
-	account, err := usecase.repository.GetAccountByID(updateAccountRequestDto.ID)
+// Update applies only the fields that were sent, keeping the rest of the account as it is.
+func (usecase usecase) Update(accountID string, updateAccountRequestDto *dto.UpdateAccountRequestDTO) error {
+	account, err := usecase.repository.GetAccountByID(accountID)
 	if err != nil {
-		return fmt.Errorf("account not found")
+		return err
 	}
 
 	if updateAccountRequestDto.FirstName != nil {
 		account.FirstName = *updateAccountRequestDto.FirstName
 	}
+
 	if updateAccountRequestDto.LastName != nil {
 		account.LastName = *updateAccountRequestDto.LastName
 	}
+
 	if updateAccountRequestDto.Password != nil {
-		account.Password = *updateAccountRequestDto.Password
+		hashedPassword, err := security.HashPassword(*updateAccountRequestDto.Password)
+		if err != nil {
+			return err
+		}
+		account.Password = hashedPassword
 	}
 
-	err = usecase.repository.Update(updateAccountRequestDto)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return usecase.repository.Update(account)
 }

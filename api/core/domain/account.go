@@ -5,8 +5,8 @@ import (
 
 	"time"
 
-	enum "github.com/pedro-scarelli/wheredidmymoneygo/core/domain/enum"
-	accountRequestDto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/account/request"
+	enum "github.com/pedroscarelli/wheredidmymoneygo/core/domain/enum"
+	accountRequestDto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/account/request"
 )
 
 type PublicAccount struct {
@@ -54,17 +54,17 @@ type AccountService interface {
 type AccountUseCase interface {
 	Create(createAccountRequestDto *accountRequestDto.CreateAccountRequestDTO) (*PublicAccount, error)
 	Delete(accountID string) error
-	Update(updateAccountRequestDto *accountRequestDto.UpdateAccountRequestDTO) error
+	Update(accountID string, updateAccountRequestDto *accountRequestDto.UpdateAccountRequestDTO) error
 	GetByID(accountID string) (*PublicAccount, error)
 	Movement(movementRequestDto *accountRequestDto.MovementRequestDTO) error
 }
 
 type AccountRepository interface {
-	Create(createAccountRequestDto *accountRequestDto.CreateAccountRequestDTO, accountNumber int, createdAt time.Time) (*PublicAccount, error)
+	Create(createAccountRequestDto *accountRequestDto.CreateAccountRequestDTO, createdAt time.Time) (*PublicAccount, error)
 	Delete(accountID string) error
-	Update(updateAccountRequestDto *accountRequestDto.UpdateAccountRequestDTO) error
+	Update(account *Account) error
 	GetAccountByID(accountID string) (*Account, error)
 	GetAccountByEmail(email string) (*Account, error)
-	Movement(movementRequestDto *accountRequestDto.MovementRequestDTO, createdAt time.Time) error
+	Movement(movementRequestDto *accountRequestDto.MovementRequestDTO, valueInCents int, createdAt time.Time) error
 	GetAccountBalance(accountID string) (int, error)
 }

@@ -3,8 +3,8 @@ package domain
 import (
 	"net/http"
 
-	requestDto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/authentication/request"
-	responseDto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/authentication/response"
+	requestDto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/authentication/request"
+	responseDto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/authentication/response"
 )
 
 type AuthenticationService interface {

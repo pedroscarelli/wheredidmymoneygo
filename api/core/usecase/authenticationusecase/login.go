@@ -1,27 +1,31 @@
 package authenticationusecase
 
 import (
-	"fmt"
+	"errors"
 
-	requestDto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/authentication/request"
-	responseDto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/authentication/response"
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/security"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
+	requestDto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/authentication/request"
+	responseDto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/authentication/response"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/security"
 )
 
 func (usecase usecase) Login(loginRequestDto *requestDto.LoginRequestDTO) (*responseDto.LoginResponseDTO, error) {
 	account, err := usecase.repository.GetAccountByEmail(loginRequestDto.Email)
 	if err != nil {
-		return nil, fmt.Errorf("incorrect email or password")
+		if errors.Is(err, domain.ErrAccountNotFound) {
+			return nil, domain.ErrInvalidCredentials
+		}
+		return nil, err
 	}
 
 	if security.IsPasswordIncorrect(loginRequestDto.Password, account.Password) {
-		return nil, fmt.Errorf("incorrect email or password")
+		return nil, domain.ErrInvalidCredentials
 	}
 
-	jwtToken := security.GenerateJwtToken(account.ID)
+	jwtToken, err := security.GenerateJwtToken(account.ID)
+	if err != nil {
+		return nil, err
+	}
 
-	loginResponseDto := responseDto.LoginResponseDTO{Token: jwtToken}
-
-	return &loginResponseDto, nil
+	return &responseDto.LoginResponseDTO{Token: jwtToken}, nil
 }
-

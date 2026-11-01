@@ -3,19 +3,15 @@ package accountusecase
 import (
 	"time"
 
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/domain/enum"
-	dto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/account/request"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain/enum"
+	dto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/account/request"
 )
 
 func (usecase usecase) Movement(movementRequestDto *dto.MovementRequestDTO) error {
+	valueInCents := movementRequestDto.ValueInCents()
 	if movementRequestDto.Type == enum.DEBITO {
-		movementRequestDto.Value = -1 * movementRequestDto.Value
+		valueInCents = -valueInCents
 	}
 
-	err := usecase.repository.Movement(movementRequestDto, time.Now().UTC())
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return usecase.repository.Movement(movementRequestDto, valueInCents, time.Now().UTC())
 }

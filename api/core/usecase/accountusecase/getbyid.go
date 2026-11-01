@@ -3,7 +3,7 @@ package accountusecase
 import (
 	"errors"
 
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
 )
 
 func (usecase usecase) GetByID(accountID string) (*domain.PublicAccount, error) {

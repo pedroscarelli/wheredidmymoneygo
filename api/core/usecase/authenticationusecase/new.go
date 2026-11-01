@@ -1,6 +1,6 @@
 package authenticationusecase
 
-import "github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
+import "github.com/pedroscarelli/wheredidmymoneygo/core/domain"
 
 type usecase struct {
 	repository domain.AccountRepository
