@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	dto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/account/request"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
 )
 
-func (repository repository) Update(updateAccountRequestDto *dto.UpdateAccountRequestDTO) error {
+func (repository repository) Update(account *domain.Account) error {
 	ctx := context.Background()
+
 	query := `
 		UPDATE tb_account
 		SET st_first_name = $1,
@@ -17,17 +18,20 @@ func (repository repository) Update(updateAccountRequestDto *dto.UpdateAccountRe
 		WHERE pk_st_id = $4;
 	    `
 
-	_, err := repository.db.Exec(
+	result, err := repository.db.Exec(
 		ctx,
 		query,
-		updateAccountRequestDto.FirstName,
-		updateAccountRequestDto.LastName,
-		updateAccountRequestDto.Password,
-		updateAccountRequestDto.ID,
+		account.FirstName,
+		account.LastName,
+		account.Password,
+		account.ID,
 	)
-
 	if err != nil {
 		return fmt.Errorf("error updating account in the database: %w", err)
+	}
+
+	if result.RowsAffected() == 0 {
+		return domain.ErrAccountNotFound
 	}
 
 	return nil

@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/jackc/pgx/v4"
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
 )
 
 func (repository repository) GetAccountByID(accountID string) (*domain.Account, error) {

@@ -1,8 +1,8 @@
 package accountrepository
 
 import (
-	"github.com/pedro-scarelli/wheredidmymoneygo/adapter/postgres"
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
+	"github.com/pedroscarelli/wheredidmymoneygo/adapter/postgres"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
 )
 
 type repository struct {

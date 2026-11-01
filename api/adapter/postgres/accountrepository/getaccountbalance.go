@@ -3,7 +3,7 @@ package accountrepository
 import (
 	"context"
 
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
 )
 
 func (repository repository) GetAccountBalance(accountID string) (int, error) {
@@ -41,7 +41,7 @@ func (repository repository) GetAccountBalance(accountID string) (int, error) {
 	}
 
 	if len(movements) == 0 {
-		return  0, nil
+		return 0, nil
 	}
 
 	return balance, nil

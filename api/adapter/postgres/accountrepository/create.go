@@ -2,30 +2,33 @@ package accountrepository
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
-	dto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/account/request"
+	"github.com/jackc/pgconn"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
+	dto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/account/request"
 )
 
-func (repository repository) Create(accountRequest *dto.CreateAccountRequestDTO, accountNumber int, createdAt time.Time) (*domain.PublicAccount, error) {
+const uniqueViolation = "23505"
+
+func (repository repository) Create(accountRequest *dto.CreateAccountRequestDTO, createdAt time.Time) (*domain.PublicAccount, error) {
 	ctx := context.Background()
-	account := domain.Account{}
+	account := domain.PublicAccount{}
 
 	err := repository.db.QueryRow(
 		ctx,
 		`INSERT INTO tb_account
-		(pk_st_id, st_first_name, st_last_name, st_cpf, st_email, st_password, it_number, dt_created_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-		returning *`,
+		(pk_st_id, st_first_name, st_last_name, st_cpf, st_email, st_password, dt_created_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		RETURNING pk_st_id, st_first_name, st_last_name, st_cpf, st_email, it_number, dt_created_at`,
 		uuid.New().String(),
 		accountRequest.FirstName,
 		accountRequest.LastName,
 		accountRequest.CPF,
 		accountRequest.Email,
 		accountRequest.Password,
-		accountNumber,
 		createdAt,
 	).Scan(
 		&account.ID,
@@ -33,24 +36,16 @@ func (repository repository) Create(accountRequest *dto.CreateAccountRequestDTO,
 		&account.LastName,
 		&account.CPF,
 		&account.Email,
-		&account.Password,
 		&account.Number,
 		&account.CreatedAt,
 	)
-
 	if err != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == uniqueViolation {
+			return nil, domain.ErrDuplicateAccount
+		}
 		return nil, err
 	}
-	publicAccount := domain.PublicAccount{
-		ID:           account.ID,
-		FirstName:    account.FirstName,
-		LastName:     account.LastName,
-		CPF:          account.CPF,
-		Email:        account.Email,
-		Number:       account.Number,
-		MonthBalance: 0,
-		CreatedAt:    account.CreatedAt,
-	}
 
-	return &publicAccount, nil
+	return &account, nil
 }

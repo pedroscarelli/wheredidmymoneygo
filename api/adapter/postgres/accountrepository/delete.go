@@ -3,7 +3,7 @@ package accountrepository
 import (
 	"context"
 
-	"github.com/pedro-scarelli/wheredidmymoneygo/core/domain"
+	"github.com/pedroscarelli/wheredidmymoneygo/core/domain"
 )
 
 func (repository repository) Delete(accountID string) error {

@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	dto "github.com/pedro-scarelli/wheredidmymoneygo/core/dto/account/request"
+	dto "github.com/pedroscarelli/wheredidmymoneygo/core/dto/account/request"
 )
 
-func (repository repository) Movement(movementRequestDto *dto.MovementRequestDTO, createdAt time.Time) error {
+func (repository repository) Movement(movementRequestDto *dto.MovementRequestDTO, valueInCents int, createdAt time.Time) error {
 	ctx := context.Background()
 
 	recurrence := movementRequestDto.Recurrence
@@ -20,7 +20,7 @@ func (repository repository) Movement(movementRequestDto *dto.MovementRequestDTO
 	for i := range recurrence {
 		ids[i] = uuid.New().String()
 		dueDates[i] = movementRequestDto.DueDate.AddDate(0, i, 0)
-		values[i] = int(movementRequestDto.Value * 100)
+		values[i] = valueInCents
 	}
 
 	query := `
