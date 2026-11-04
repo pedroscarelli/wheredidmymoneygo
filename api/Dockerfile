@@ -1,4 +1,4 @@
-FROM golang:1.24.3-bookworm as builder
+FROM golang:1.24.3-bookworm AS builder
 WORKDIR /app
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -installsuffix cgo -o go-api ./adapter/http/main.go
